@@ -4,6 +4,12 @@ workflows:
     environment:
       flutter: stable
     scripts:
+      - name: Create Android Native Structure
+        script: |
+          flutter create . --org com.hypereldokan.app --platforms android
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
       - name: Build APK
         script: |
           flutter build apk --release
