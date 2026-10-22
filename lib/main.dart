@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   title,
                   maxLines: 1,
-                  overflow: TextSpan.ellipsis,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
