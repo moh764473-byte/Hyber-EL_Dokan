@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -11,6 +14,7 @@ class Product {
   String originalPrice;
   String offerPrice;
   String discount;
+  String? imagePath; // مسار الصورة المضافة من الموبايل
 
   Product({
     required this.id,
@@ -18,6 +22,7 @@ class Product {
     required this.originalPrice,
     required this.offerPrice,
     required this.discount,
+    this.imagePath,
   });
 }
 
@@ -50,9 +55,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String adminPassword = "1234"; // كلمة السر للوحة التحكم
+  final String adminPassword = "2462024"; // كلمة السر الجديدة
 
-  // قائمة المنتجات الإفتراضية
   List<Product> productsList = [
     Product(
       id: '1',
@@ -89,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // نافذة تسجيل الدخول للوحة الإدارة
   void _showAdminLoginDialog() {
     final passwordController = TextEditingController();
     showDialog(
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: passwordController,
             obscureText: true,
             decoration: const InputDecoration(
-              labelText: 'أدخل كلمة السر',
+              labelText: 'أدخل كلمة السر الجديدة',
               labelStyle: TextStyle(color: Colors.grey),
             ),
           ),
@@ -133,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // لوحة التحكم لإضافة وحذف المنتجات
   void _openAdminPanel() {
     showModalBottomSheet(
       context: context,
@@ -146,6 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
             final originalPriceController = TextEditingController();
             final offerPriceController = TextEditingController();
             final discountController = TextEditingController();
+            String? pickedImagePath;
+
+            Future<void> pickImage() async {
+              final picker = ImagePicker();
+              final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+              if (pickedFile != null) {
+                setModalState(() {
+                  pickedImagePath = pickedFile.path;
+                });
+              }
+            }
 
             return Padding(
               padding: EdgeInsets.only(
@@ -167,6 +180,41 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     const Divider(color: Colors.grey),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: GestureDetector(
+                        onTap: pickImage,
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFFD4AF37)),
+                          ),
+                          child: pickedImagePath == null
+                              ? const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_a_photo,
+                                        color: Color(0xFFD4AF37), size: 30),
+                                    SizedBox(height: 4),
+                                    Text('اختر صورة',
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 11)),
+                                  ],
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: kIsWeb
+                                      ? Image.network(pickedImagePath!,
+                                          fit: BoxFit.cover)
+                                      : Image.file(File(pickedImagePath!),
+                                          fit: BoxFit.cover),
+                                ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     TextField(
                       controller: nameController,
@@ -225,13 +273,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   discount: discountController.text.isEmpty
                                       ? 'عرض خاص'
                                       : discountController.text,
+                                  imagePath: pickedImagePath,
                                 ),
                               );
                             });
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('تمت إضافة المنتج بنجاح!')),
+                                  content: Text('تمت إضافة المنتج بالصورة بنجاح!')),
                             );
                           }
                         },
@@ -405,6 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           originalPrice: prod.originalPrice,
                           offerPrice: prod.offerPrice,
                           discount: prod.discount,
+                          imagePath: prod.imagePath,
                         );
                       },
                     ),
@@ -420,6 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String originalPrice,
     required String offerPrice,
     required String discount,
+    String? imagePath,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -440,8 +491,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(12)),
                 ),
-                child: const Icon(Icons.shopping_bag,
-                    size: 50, color: Color(0xFFD4AF37)),
+                child: imagePath == null
+                    ? const Icon(Icons.shopping_bag,
+                        size: 50, color: Color(0xFFD4AF37))
+                    : ClipRRect(
+                        borderRadius:
+                            const BorderRadius.vertical(top: Radius.circular(12)),
+                        child: Image.file(
+                          File(imagePath),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 110,
+                        ),
+                      ),
               ),
               Positioned(
                 top: 8,
