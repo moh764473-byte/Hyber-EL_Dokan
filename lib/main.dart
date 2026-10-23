@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
               } catch (e) {
-                // تجاهل الأخطاء المؤقتة لاختيار الصورة
+                // تجاهل أي خطأ مؤقت لاختيار الصورة
               }
             }
 
@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             controller: originalPriceController,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
-                              labelText: 'السعر قبل العرض (اختياري)',
+                              labelText: 'السعر قبل العرض',
                               labelStyle: TextStyle(color: Colors.grey),
                             ),
                           ),
@@ -274,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       controller: discountController,
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
-                        labelText: 'شريط الخصم (مثال: وفر 20% أو عرض خاص)',
+                        labelText: 'شريط الخصم (مثال: وفر 20%)',
                         labelStyle: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -297,7 +297,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   originalPrice: originalPriceController.text,
                                   offerPrice: offerPriceController.text,
                                   discount: discountController.text.isEmpty
-                                      .toString() == 'true'
                                       ? 'عرض خاص'
                                       : discountController.text,
                                   imagePath: pickedImagePath,
@@ -306,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('تمت إضافة المنتج بنجاح وتحديث الواجهة!')),
+                              const SnackBar(content: Text('تمت إضافة المنتج بنجاح!')),
                             );
                           }
                         },
@@ -399,7 +398,6 @@ class _HomeScreenState extends State<HomeScreen> {
         textDirection: TextDirection.rtl,
         child: Column(
           children: [
-            // بنر ترحيبي فخم أعلى التطبيق
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -432,7 +430,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            // قائمة الأقسام الأفقية
             SizedBox(
               height: 42,
               child: ListView.builder(
@@ -469,7 +466,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            // شبكة المنتجات الاحترافية
             Expanded(
               child: productsList.isEmpty
                   ? const Center(
