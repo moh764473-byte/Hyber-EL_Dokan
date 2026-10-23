@@ -19,7 +19,7 @@ dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
 
 flutter_launcher_icons:
-  image_path: "icon.png"
+  image_path: "icon.png" # اسم صورة اللوجو اللي رفعتها عندك
   android: true
   ios: true
 
