@@ -35,11 +35,11 @@ class HyperElDokanApp extends StatelessWidget {
       title: 'هايبر الدكان',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF121212),
+        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
         primaryColor: const Color(0xFFD4AF37),
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFFD4AF37),
-          surface: Color(0xFF1E1E1E),
+          surface: Color(0xFF1A1A1A),
         ),
       ),
       home: const HomeScreen(),
@@ -60,33 +60,40 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Product> productsList = [
     Product(
       id: '1',
-      name: 'زيت عباد الشمس 1 لتر',
+      name: 'زيت عباد الشمس الممتاز 1 لتر',
       originalPrice: '65 ج.م',
       offerPrice: '52 ج.م',
       discount: 'وفر 20%',
     ),
     Product(
       id: '2',
-      name: 'أرز فاخر 1 كجم',
+      name: 'أرز المصري الفاخر 1 كجم',
       originalPrice: '35 ج.م',
       offerPrice: '28 ج.م',
       discount: 'وفر 20%',
+    ),
+    Product(
+      id: '3',
+      name: 'سكر الأبيض المصفى 1 كجم',
+      originalPrice: '40 ج.م',
+      offerPrice: '34 ج.م',
+      discount: 'عرض خاص',
     ),
   ];
 
   final List<String> categories = [
     'الكل',
-    'بقالة ومواد غذائية',
+    'بقالة وعروض',
     'ألبان ومجمدات',
     'خضراوات وفواكه',
-    'منظفات ورعاية شخصية',
+    'منظفات وعناية',
   ];
 
   String selectedCategory = 'الكل';
 
   Future<void> _openWhatsApp(String phone, String productName) async {
     final message = Uri.encodeComponent(
-        'السلام عليكم، استفسار عن عرض: $productName في هايبر الدكان (فرع كفر المصيلحة)');
+        'السلام عليكم، أريد طلب منتج: $productName من هايبر الدكان (فرع كفر المصيلحة)');
     final url = Uri.parse('https://wa.me/2$phone?text=$message');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -100,14 +107,23 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
-          title: const Text('لوحة التحكم - تسجيل الدخول',
-              style: TextStyle(color: Color(0xFFD4AF37), fontSize: 16)),
+          title: const Row(
+            children: [
+              Icon(Icons.admin_panel_settings, color: Color(0xFFD4AF37)),
+              SizedBox(width: 8),
+              Text('لوحة الإدارة', style: TextStyle(color: Color(0xFFD4AF37), fontSize: 16)),
+            ],
+          ),
           content: TextField(
             controller: passwordController,
             obscureText: true,
+            style: const TextStyle(color: Colors.white),
             decoration: const InputDecoration(
               labelText: 'أدخل كلمة السر',
               labelStyle: TextStyle(color: Colors.grey),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFD4AF37)),
+              ),
             ),
           ),
           actions: [
@@ -116,8 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text('إلغاء', style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4AF37)),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)),
               onPressed: () {
                 if (passwordController.text == adminPassword) {
                   Navigator.pop(context);
@@ -128,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
               },
-              child: const Text('دخول', style: TextStyle(color: Colors.black)),
+              child: const Text('دخول', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -140,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF1A1A1A),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
@@ -163,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
               } catch (e) {
-                // تجاهل أي خطأ مؤقت في اختيار الصورة
+                // تجاهل الأخطاء المؤقتة لاختيار الصورة
               }
             }
 
@@ -180,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '⚙️ لوحة إدارة عروض هايبر الدكان',
+                      '⚙️ إضافة وتعديل عروض هايبر الدكان',
                       style: TextStyle(
                           color: Color(0xFFD4AF37),
                           fontSize: 18,
@@ -192,23 +207,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: GestureDetector(
                         onTap: pickImage,
                         child: Container(
-                          height: 100,
-                          width: 100,
+                          height: 90,
+                          width: 90,
                           decoration: BoxDecoration(
-                            color: Colors.black26,
+                            color: Colors.black45,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFFD4AF37)),
+                            border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
                           ),
                           child: pickedImagePath == null
                               ? const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.add_a_photo,
-                                        color: Color(0xFFD4AF37), size: 30),
+                                    Icon(Icons.add_a_photo, color: Color(0xFFD4AF37), size: 28),
                                     SizedBox(height: 4),
-                                    Text('اختر صورة',
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 11)),
+                                    Text('صورة المنتج',
+                                        style: TextStyle(color: Colors.grey, fontSize: 10)),
                                   ],
                                 )
                               : ClipRRect(
@@ -216,8 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Image.file(
                                     File(pickedImagePath!),
                                     fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
+                                    width: 90,
+                                    height: 90,
                                   ),
                                 ),
                         ),
@@ -226,36 +239,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 10),
                     TextField(
                       controller: nameController,
+                      style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
-                          labelText: 'اسم المنتج',
-                          labelStyle: TextStyle(color: Colors.grey)),
+                        labelText: 'اسم المنتج',
+                        labelStyle: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     Row(
                       children: [
                         Expanded(
                           child: TextField(
                             controller: originalPriceController,
+                            style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
-                                labelText: 'السعر الأصلي',
-                                labelStyle: TextStyle(color: Colors.grey)),
+                              labelText: 'السعر قبل العرض (اختياري)',
+                              labelStyle: TextStyle(color: Colors.grey),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextField(
                             controller: offerPriceController,
+                            style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
-                                labelText: 'سعر العرض',
-                                labelStyle: TextStyle(color: Colors.grey)),
+                              labelText: 'سعر العرض الحالي',
+                              labelStyle: TextStyle(color: Colors.grey),
+                            ),
                           ),
                         ),
                       ],
                     ),
                     TextField(
                       controller: discountController,
+                      style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
-                          labelText: 'نسبة التوفير (مثال: وفر 20%)',
-                          labelStyle: TextStyle(color: Colors.grey)),
+                        labelText: 'شريط الخصم (مثال: وفر 20% أو عرض خاص)',
+                        labelStyle: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     const SizedBox(height: 15),
                     SizedBox(
@@ -273,12 +294,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Product(
                                   id: DateTime.now().toString(),
                                   name: nameController.text,
-                                  originalPrice:
-                                      originalPriceController.text.isEmpty
-                                          ? ''
-                                          : originalPriceController.text,
+                                  originalPrice: originalPriceController.text,
                                   offerPrice: offerPriceController.text,
                                   discount: discountController.text.isEmpty
+                                      .toString() == 'true'
                                       ? 'عرض خاص'
                                       : discountController.text,
                                   imagePath: pickedImagePath,
@@ -287,22 +306,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('تمت إضافة المنتج بنجاح!')),
+                              const SnackBar(content: Text('تمت إضافة المنتج بنجاح وتحديث الواجهة!')),
                             );
                           }
                         },
                         icon: const Icon(Icons.add, color: Colors.black),
-                        label: const Text('إضافة العرض فوراً',
+                        label: const Text('نشر العرض فوراً',
                             style: TextStyle(
                                 color: Colors.black,
-                                fontWeight: FontWeight.bold)),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text('المنتجات الحالية (اضغط 🗑️ للحذف):',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    const Text('المنتجات المعروضة حالياً (للحذف):',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     ListView.builder(
                       shrinkWrap: true,
@@ -311,12 +329,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         final item = productsList[index];
                         return ListTile(
-                          title: Text(item.name,
-                              style: const TextStyle(color: Colors.white)),
-                          subtitle: Text(item.offerPrice,
-                              style: const TextStyle(color: Color(0xFFD4AF37))),
+                          title: Text(item.name, style: const TextStyle(color: Colors.white)),
+                          subtitle: Text(item.offerPrice, style: const TextStyle(color: Color(0xFFD4AF37))),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: Colors.redAccent),
                             onPressed: () {
                               setState(() {
                                 productsList.removeAt(index);
@@ -342,12 +358,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
-        elevation: 2,
+        backgroundColor: const Color(0xFF141414),
+        elevation: 0,
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
                 borderRadius: BorderRadius.circular(8),
@@ -357,25 +373,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   color: Color(0xFFD4AF37),
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
               ),
             ),
             const SizedBox(width: 8),
             const Text(
               'كفر المصيلحة',
-              style: TextStyle(fontSize: 11, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.admin_panel_settings,
-                color: Color(0xFFD4AF37)),
+            icon: const Icon(Icons.admin_panel_settings, color: Color(0xFFD4AF37)),
             onPressed: _showAdminLoginDialog,
           ),
           IconButton(
-            icon: const Icon(Icons.phone_forwarded, color: Color(0xFF25D366)),
+            icon: const Icon(Icons.support_agent, color: Color(0xFF25D366)),
             onPressed: () => _openWhatsApp('01118634111', 'استفسار عام'),
           ),
         ],
@@ -384,25 +399,42 @@ class _HomeScreenState extends State<HomeScreen> {
         textDirection: TextDirection.rtl,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'ابحث عن العروض والمنتجات...',
-                  hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-                  prefixIcon:
-                      const Icon(Icons.search, color: Color(0xFFD4AF37)),
-                  filled: true,
-                  fillColor: const Color(0xFF1E1E1E),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFFD4AF37)),
-                  ),
+            // بنر ترحيبي فخم أعلى التطبيق
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2A2200), Color(0xFF141414)],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
                 ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5)),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '🔥 عروض الأسبوع الكبرى',
+                    style: TextStyle(
+                      color: Color(0xFFD4AF37),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'أقوى العروض والخصومات اليومية من هايبر الدكان لحد باب البيت.',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
               ),
             ),
+            // قائمة الأقسام الأفقية
             SizedBox(
-              height: 45,
+              height: 42,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
@@ -417,12 +449,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 6),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFD4AF37)
-                            : const Color(0xFF1E1E1E),
+                        color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF1A1A1A),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: const Color(0xFFD4AF37)),
                       ),
@@ -431,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: isSelected ? Colors.black : Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 12,
                         ),
                       ),
                     ),
@@ -439,18 +468,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
+            // شبكة المنتجات الاحترافية
             Expanded(
               child: productsList.isEmpty
                   ? const Center(
-                      child: Text('لا توجد عروض حالياً، أضف أول عرض!',
+                      child: Text('لا توجد عروض مضافة حالياً',
                           style: TextStyle(color: Colors.grey)))
                   : GridView.builder(
                       padding: const EdgeInsets.all(12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.72,
+                        childAspectRatio: 0.70,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
                       ),
@@ -482,9 +511,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.4)),
+        border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,46 +521,43 @@ class _HomeScreenState extends State<HomeScreen> {
           Stack(
             children: [
               Container(
-                height: 110,
+                height: 105,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(12)),
+                  color: Colors.black38,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 ),
                 child: imagePath == null
-                    ? const Icon(Icons.shopping_bag,
-                        size: 50, color: Color(0xFFD4AF37))
+                    ? const Icon(Icons.shopping_basket, size: 45, color: Color(0xFFD4AF37))
                     : ClipRRect(
-                        borderRadius:
-                            const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                         child: Image.file(
                           File(imagePath),
                           fit: BoxFit.cover,
                           width: double.infinity,
-                          height: 110,
+                          height: 105,
                         ),
                       ),
               ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD4AF37),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    discount,
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold),
+              if (discount.isNotEmpty)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      discount,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           Padding(
@@ -546,7 +572,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 13),
+                      fontSize: 12),
                 ),
                 const SizedBox(height: 4),
                 Row(
@@ -556,33 +582,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: const TextStyle(
                           color: Color(0xFFD4AF37),
                           fontWeight: FontWeight.bold,
-                          fontSize: 14),
+                          fontSize: 13),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 5),
                     if (originalPrice.isNotEmpty)
                       Text(
                         originalPrice,
                         style: const TextStyle(
                             color: Colors.grey,
                             decoration: TextDecoration.lineThrough,
-                            fontSize: 11),
+                            fontSize: 10),
                       ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF25D366),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                          borderRadius: BorderRadius.circular(6)),
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      minimumSize: const Size(0, 30),
                     ),
                     onPressed: () => _openWhatsApp('01118634111', title),
-                    icon: const Icon(Icons.chat, size: 16, color: Colors.white),
-                    label: const Text('اطلب الآن',
-                        style: TextStyle(color: Colors.white, fontSize: 11)),
+                    icon: const Icon(Icons.chat, size: 14, color: Colors.white),
+                    label: const Text('اطلب واتساب',
+                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
