@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       '⚙️ لوحة إدارة عروض هايبر الدكان',
@@ -312,7 +312,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          // أيقونة قفل الإدارة
           IconButton(
             icon: const Icon(Icons.admin_panel_settings,
                 color: Color(0xFFD4AF37)),
