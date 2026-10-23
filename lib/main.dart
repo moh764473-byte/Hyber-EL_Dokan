@@ -14,7 +14,7 @@ class Product {
   String originalPrice;
   String offerPrice;
   String discount;
-  String? imagePath; // مسار الصورة المضافة من الموبايل
+  String? imagePath;
 
   Product({
     required this.id,
@@ -55,7 +55,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String adminPassword = "2462024"; // كلمة السر الجديدة
+  final String adminPassword = "2462024";
 
   List<Product> productsList = [
     Product(
@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: passwordController,
             obscureText: true,
             decoration: const InputDecoration(
-              labelText: 'أدخل كلمة السر الجديدة',
+              labelText: 'أدخل كلمة السر',
               labelStyle: TextStyle(color: Colors.grey),
             ),
           ),
@@ -151,12 +151,19 @@ class _HomeScreenState extends State<HomeScreen> {
             String? pickedImagePath;
 
             Future<void> pickImage() async {
-              final picker = ImagePicker();
-              final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-              if (pickedFile != null) {
-                setModalState(() {
-                  pickedImagePath = pickedFile.path;
-                });
+              try {
+                final picker = ImagePicker();
+                final pickedFile = await picker.pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 80,
+                );
+                if (pickedFile != null) {
+                  setModalState(() {
+                    pickedImagePath = pickedFile.path;
+                  });
+                }
+              } catch (e) {
+                // تجاهل أي خطأ مؤقت في اختيار الصورة
               }
             }
 
@@ -206,11 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )
                               : ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: kIsWeb
-                                      ? Image.network(pickedImagePath!,
-                                          fit: BoxFit.cover)
-                                      : Image.file(File(pickedImagePath!),
-                                          fit: BoxFit.cover),
+                                  child: Image.file(
+                                    File(pickedImagePath!),
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ),
                         ),
                       ),
@@ -228,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: TextField(
                             controller: originalPriceController,
                             decoration: const InputDecoration(
-                                labelText: 'السعر الأصلي (مثال: 65 ج.م)',
+                                labelText: 'السعر الأصلي',
                                 labelStyle: TextStyle(color: Colors.grey)),
                           ),
                         ),
@@ -237,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: TextField(
                             controller: offerPriceController,
                             decoration: const InputDecoration(
-                                labelText: 'سعر العرض (مثال: 52 ج.م)',
+                                labelText: 'سعر العرض',
                                 labelStyle: TextStyle(color: Colors.grey)),
                           ),
                         ),
@@ -280,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('تمت إضافة المنتج بالصورة بنجاح!')),
+                                  content: Text('تمت إضافة المنتج بنجاح!')),
                             );
                           }
                         },
@@ -305,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return ListTile(
                           title: Text(item.name,
                               style: const TextStyle(color: Colors.white)),
-                          subtitle: Text('${item.offerPrice} - ${item.discount}',
+                          subtitle: Text(item.offerPrice,
                               style: const TextStyle(color: Color(0xFFD4AF37))),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
