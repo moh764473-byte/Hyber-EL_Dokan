@@ -72,13 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
       offerPrice: '28 ج.م',
       discount: 'وفر 20%',
     ),
-    Product(
-      id: '3',
-      name: 'سكر الأبيض المصفى 1 كجم',
-      originalPrice: '40 ج.م',
-      offerPrice: '34 ج.م',
-      discount: 'عرض خاص',
-    ),
   ];
 
   final List<String> categories = [
@@ -170,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final picker = ImagePicker();
                 final pickedFile = await picker.pickImage(
                   source: ImageSource.gallery,
-                  imageQuality: 80,
+                  imageQuality: 70,
                 );
                 if (pickedFile != null) {
                   setModalState(() {
@@ -178,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
               } catch (e) {
-                // تجاهل أي خطأ مؤقت لاختيار الصورة
+                // تجاهل أي خطأ مؤقت
               }
             }
 
@@ -305,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('تمت إضافة المنتج بنجاح!')),
+                              const SnackBar(content: Text('تمت إضافة المنتج بالصورة بنجاح!')),
                             );
                           }
                         },
@@ -523,7 +516,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black38,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 ),
-                child: imagePath == null
+                child: (imagePath == null || imagePath.isEmpty)
                     ? const Icon(Icons.shopping_basket, size: 45, color: Color(0xFFD4AF37))
                     : ClipRRect(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -532,6 +525,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 105,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.shopping_basket, size: 45, color: Color(0xFFD4AF37));
+                          },
                         ),
                       ),
               ),
